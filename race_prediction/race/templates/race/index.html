@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>レース一覧</title>
+    </head>
+    <body>
+        <h1>今週の重賞レース</h1>
+        {% for title in title_list %}
+        <p>{{ title }}</p>
+        {% endfor %}
+    </body>
+</html>
