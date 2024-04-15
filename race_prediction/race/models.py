@@ -1,11 +1,22 @@
+from typing import Any
 from django.db import models
 
+#後でマイグレーションするのを忘れずに！
 class Race(models.Model):
-    race_name=models.CharField(max_length=20)
-    race_place=models.CharField(max_length=10)
-    race_type_and_distance=models.IntegerField()
-    race_day_of_the_week=models.CharField(max_length=10)
-    race_grade=models.CharField(max_length=10)
+    name=models.CharField(max_length=20) 
+    place=models.CharField(max_length=10)
+    type=models.IntegerField()
+    date=models.CharField(max_length=10)
+    grade=models.CharField(max_length=10)
+    check=models.IntegerField() #一週間以内に開催されるなら0、それ以外は1
+
+    #引数をもとにインスタンスを生成
+    def __init__(self,name,place,week,grade):
+        self.name=name
+        self.place=place
+        self.week=week
+        self.grade=grade
+        
 
 class Horse(models.Model):
     horse_race=models.ForeignKey(Race,on_delete=models.CASCADE)
