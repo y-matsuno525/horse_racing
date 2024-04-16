@@ -8,14 +8,17 @@ class Race(models.Model):
     type=models.IntegerField()
     date=models.CharField(max_length=10)
     grade=models.CharField(max_length=10)
-    check=models.IntegerField() #一週間以内に開催されるなら0、それ以外は1
+    d_check=models.IntegerField() #一週間以内に開催されるなら0、それ以外は1
+    number=models.IntegerField()
 
     #引数をもとにインスタンスを生成
-    def __init__(self,name,place,week,grade):
+    def __init__(self,name,place,week,grade,d_check,num):
         self.name=name
         self.place=place
         self.week=week
         self.grade=grade
+        self.d_check=d_check
+        self.number=num
         
 
 class Horse(models.Model):
