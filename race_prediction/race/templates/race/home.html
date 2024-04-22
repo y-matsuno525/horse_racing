@@ -6,9 +6,10 @@
     </head>
     <body>
         <h1>今週の重賞レース</h1>
-        {% for object in object_list %}
-            {% if object.check == 0 %}
-                <p href="race/{{ object.number }}/">{{ object.name }}</p>
+        {% for object in objects %}
+            {% if object.d_check == 0 %}
+                <a href="{% url 'race' object.id %}">{{ object.name }}</a>
+            {% endif %}
         {% endfor %}
     </body>
 </html>

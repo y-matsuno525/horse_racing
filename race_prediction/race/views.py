@@ -56,7 +56,7 @@ def home(request):
                 d_check=1
 
             #Raceクラスのインスタンスを作成
-            race=Race(name_list[i],name_list[i],place_list[i],date_list[i],grade_list[i],d_check,i)
+            race=Race(name=name_list[i],place=place_list[i],date=date_list[i],grade=grade_list[i],d_check=d_check)
             object_list.append(race)
 
     params={
@@ -67,19 +67,33 @@ def home(request):
     
 
 #レース情報を表示するページ
-def race(request,number):
+def race(request,id):
 
     #選択されたレースのURLを生成
-    if place_list[number] == '阪神':
-        url_list[number]="https://www.keibalab.jp/db/race/2024"+date_list[number][0:2]+date_list[number][3:5]+"0911/tokubetsu.html?kind=simple"
-    elif place_list[number] == '中山':
-        url_list[number]="https://www.keibalab.jp/db/race/2024"+date_list[number][0:2]+date_list[number][3:5]+"0611/tokubetsu.html?kind=simple"
-    elif place_list[number]=='福島':
-        url_list[number]="https://www.keibalab.jp/db/race/2024"+date_list[number][0:2]+date_list[number][3:5]+"0311/tokubetsu.html?kind=simple"
+    if place_list[id]=='阪神':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0911/tokubetsu.html?kind=simple"
+    elif place_list[id]=='中山':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0611/tokubetsu.html?kind=simple"
+    elif place_list[id]=='福島':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0311/tokubetsu.html?kind=simple"
+    elif place_list[id]=='東京':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0511/tokubetsu.html?kind=simple"
+    elif place_list[id]=='京都':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0411/tokubetsu.html?kind=simple"
+    elif place_list[id]=='新潟':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0311/tokubetsu.html?kind=simple"
+    elif place_list[id]=='小倉':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"1011/tokubetsu.html?kind=simple"
+    elif place_list[id]=='中京':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0711/tokubetsu.html?kind=simple"
+    elif place_list[id]=='函館':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0211/tokubetsu.html?kind=simple"
+    elif place_list[id]=='札幌':
+        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0111/tokubetsu.html?kind=simple"
     
     #選択されたレースの情報をスクレイピング
     headers = {'User-agent': 'Mozilla/5.0'}
-    response = requests.get(url=url_list[number], headers=headers)
+    response = requests.get(url=url_list[id], headers=headers)
     response.encoding = response.apparent_encoding
     df = pd.read_html(response.text)[0]
 
@@ -87,11 +101,12 @@ def race(request,number):
     horse_list=[] #馬の名前を格納するリスト
     for j in range(df.shape[0]):
         horse_list.append(df.iloc[j,0])
-    title=table.iloc[number,0]
+    title=table.iloc[id,0]
 
     params={
         "horses":horse_list,
-        "title":title
+        "title":title,
+        "id":id,
     }
 
-    return(request,"race/race.html",params)
+    return render(request,"race/race.html",params)
