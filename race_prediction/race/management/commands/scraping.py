@@ -1,7 +1,3 @@
-from django.contrib import admin
-from .models import Race
-
-admin.site.register(Race)
 from django.core.management.base import BaseCommand
 from django.http import HttpResponse
 
@@ -28,3 +24,4 @@ class Command(BaseCommand):
             #Raceクラスのインスタンスを作成
             race=Race(name=table.iloc[i,1],place=table.iloc[i,3],date=table.iloc[i,0],grade=table.iloc[i,2],d_check=1,number=i)
             race.save()
+

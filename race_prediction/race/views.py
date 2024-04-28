@@ -32,6 +32,7 @@ for k in range(race_number):
     name_list.append(table.iloc[k,1])
     grade_list.append(table.iloc[k,2])
     place_list.append(table.iloc[k,3])
+#テスト済み
 
 #ホーム画面
 def home(request):
@@ -40,27 +41,24 @@ def home(request):
     m_now=dt_now.month
     d_now=dt_now.day
 
-    #初回のみスクレイピングを行う
-    if Race.objects.count() == 0:
+    objects=Race.objects.all()
 
-        for i in range(race_number):
+    for object in objects:
             
-            #一週間以内に開催されるかどうかを判定
-            m=int(date_list[i][0:2])
-            d=int(date_list[i][3:5])
-            one_week_later=dt_now+timedelta(days=6)
-            race_date=dt_date(2024,m,d)
-            if dt_now <= race_date <= one_week_later:
-                d_check=0
-            else:
-                d_check=1
-
-            #Raceクラスのインスタンスを作成
-            race=Race(name=name_list[i],place=place_list[i],date=date_list[i],grade=grade_list[i],d_check=d_check)
-            object_list.append(race)
+        #一週間以内に開催されるかどうかを判定
+        m=int(object.date[0:2])
+        d=int(object.date[3:5])
+        one_week_later=dt_now+timedelta(days=6)
+        race_date=dt_date(2024,m,d)
+        if dt_now <= race_date <= one_week_later:
+            object.d_check=0
+            object.save()
+        else:
+            object.d_check=1
+            object.save()
 
     params={
-        'objects':object_list,
+        'objects':objects,
             }     
 
     return render(request,"race/home.html",params)
