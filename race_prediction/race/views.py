@@ -2,19 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 import pandas as pd
-import numpy.random as random
-import scipy as sp
-import numpy as np
-from pandas import Series, DataFrame
+
+import random
 
 from datetime import datetime,timedelta
 from datetime import date as dt_date
 
 import requests
-
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import seaborn as sns
 
 from .models import Race,Horse
 from .forms import vote
@@ -50,7 +44,7 @@ def home(request):
     
 
 #レース情報を表示するページ
-def race(request,id):
+def race_info(request,id):
     
     race=Race.objects.get(number=id)
     url=""
@@ -118,5 +112,9 @@ def race(request,id):
 
 def voted(request):
     if (request.method=="POST"):
-        Horse.objects.get(name=request.POST['choice']).count += 1
+        horse=Horse.objects.filter(name=request.POST['choice'])
+        horse.vote_count += 1
+        horse.save()
+        
+        
 

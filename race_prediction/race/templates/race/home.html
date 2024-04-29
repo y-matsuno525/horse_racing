@@ -8,7 +8,7 @@
         <h1>今週の重賞レース</h1>
         {% for object in objects %}
             {% if object.d_check == 0 %}
-                <a href="{% url 'race' object.number %}">{{ object.name }}</a>
+                <a href="{% url 'race_info' object.number %}">{{ object.name }}</a>
             {% endif %}
         {% endfor %}
     </body>
