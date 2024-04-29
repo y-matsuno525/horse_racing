@@ -7,5 +7,5 @@ class VoteForm(forms.Form):
     #choicesはタプルのリストじゃないとだめ
     def __init__(self,horses=None,*args,**kwargs):
         super(VoteForm, self).__init__(*args, **kwargs) #よくわからんけど必要
-        self.fields['choice']=forms.ChoiceField(choices=[(horse.name,horse.name) for horse in horses],widget=forms.RadioSelect()) 
+        self.fields['choice']=forms.ChoiceField(choices=[(horse.name,horse.name+"("+str(horse.rank)+"番人気)") for horse in horses],widget=forms.RadioSelect()) 
         

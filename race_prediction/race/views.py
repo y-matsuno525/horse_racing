@@ -84,8 +84,26 @@ def race_info(request,id):
         if not Horse.objects.filter(name=df.iloc[j,0]).exists():
             horse=Horse(race_name=race,name=df.iloc[j,0],vote_count=0)
             horse.save()
+        else:
+            horse=Horse.objects.get(name=df.iloc[j,0])
+            horse.race_name=race
+            horse.save()
+
+
     
-    horses=Horse.objects.filter(race_name=race)
+    horses=Horse.objects.filter(race_name=race).order_by('vote_count').reverse()
+
+    current_rank=0
+    previous_vote_count=None
+
+    for horse in horses:
+        if horse.vote_count != previous_vote_count:
+            current_rank += 1
+            horse.rank = current_rank
+            previous_vote_count=horse.vote_count
+        else:
+            horse.rank = current_rank
+
     form=VoteForm(horses=horses)
 
     params={
