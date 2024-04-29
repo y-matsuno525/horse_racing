@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Race
 
-admin.site.register(Race)
 from django.core.management.base import BaseCommand
 from django.http import HttpResponse
 
@@ -12,6 +11,12 @@ from datetime import datetime,timedelta
 from datetime import date as dt_date
 
 from race.models import Race
+
+from django.contrib.auth.models import Group
+
+from .models import User
+
+
 
 class Command(BaseCommand):
 

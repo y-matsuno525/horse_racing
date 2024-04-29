@@ -13,8 +13,15 @@ import requests
 from .models import Race,Horse
 from .forms import VoteForm
 
-#ホーム画面
-def home(request):
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+
+
+
+
+#レース一覧画面
+def race_list(request):
 
     dt_now = dt_date.today()
     m_now=dt_now.month
@@ -40,8 +47,9 @@ def home(request):
         'objects':objects,
             }     
 
-    return render(request,"race/home.html",params)
+    return render(request,"race/race_list.html",params)
     
+
 
 #レース情報を表示するページ
 def race_info(request,id):
@@ -59,9 +67,9 @@ def race_info(request,id):
     elif race.place=='東京':
         url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0511/tokubetsu.html?kind=simple"
     elif race.place=='京都':
-        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0411/tokubetsu.html?kind=simple"
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0811/tokubetsu.html?kind=simple"
     elif race.place=='新潟':
-        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0311/tokubetsu.html?kind=simple"
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0411/tokubetsu.html?kind=simple"
     elif race.place=='小倉':
         url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"1011/tokubetsu.html?kind=simple"
     elif race.place=='中京':
@@ -115,6 +123,8 @@ def race_info(request,id):
 
     return render(request,"race/race_info.html",params)
 
+
+
 def voted(request):
     if (request.method=="POST"):
         horse=Horse.objects.get(name=request.POST['choice'])
@@ -123,5 +133,6 @@ def voted(request):
     
     return render(request,"race/voted.html")
 
-        
+
+
 
