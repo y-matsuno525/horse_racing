@@ -4,10 +4,17 @@
         <meta charset="utf-8">
         <title>{{ title }}</title>
     </head>
-    <body>
-        <h1>{{ title }}</h1>
-        {% for horse in horses %}
-        <p>{{ horse }}</p>
-        {% endfor %}
+    <body class="container">
+        <h1 class="display-4 text-primary">{{ title }}</h1>
+        <form action="{% url 'voted' %}" method="post"> 
+            {% csrf_token %}
+            <table>
+            {{ form.as_p }}
+            <tr><td></td><td>
+                <input type="submit" class="btn btn-primary my-2" value="投票">
+            </td></tr>
+            </table>
+        </form>
+        
     </body>
 </html>

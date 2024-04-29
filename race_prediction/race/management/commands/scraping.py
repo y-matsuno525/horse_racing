@@ -9,15 +9,21 @@ from datetime import date as dt_date
 
 from race.models import Race
 
+import requests
+
 class Command(BaseCommand):
 
     #文章考えるのダルいからとりあえずこれ
     help="scraping"
 
     def handle(self,*args,**options):
-
-        table=pd.read_html("https://race.netkeiba.com/top/schedule.html")[0]
-        race_number=table.shape[0] #重賞レースの数
+        try:
+            url="https://race.netkeiba.com/top/schedule.html"
+            table=pd.read_html(url)[0]
+            race_number=table.shape[0] #重賞レースの数
+            print("スクレイピングに成功しました")
+        except Exception as e:
+            print(f"エラーが発生しました: {e}")
 
         for i in range(race_number):
 

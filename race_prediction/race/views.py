@@ -16,23 +16,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import seaborn as sns
 
-from .models import Race
-
-#グローバル変数
-table=pd.read_html("https://race.netkeiba.com/top/schedule.html")[0]
-race_number=table.shape[0] #重賞レースの数
-date_list=[]
-name_list=[]
-grade_list=[]
-place_list=[]
-object_list=[]
-url_list=['']*race_number
-for k in range(race_number):
-    date_list.append(table.iloc[k,0])
-    name_list.append(table.iloc[k,1])
-    grade_list.append(table.iloc[k,2])
-    place_list.append(table.iloc[k,3])
-#テスト済み
+from .models import Race,Horse
+from .forms import vote
 
 #ホーム画面
 def home(request):
@@ -66,45 +51,72 @@ def home(request):
 
 #レース情報を表示するページ
 def race(request,id):
+    
+    race=Race.objects.get(number=id)
+    url=""
 
     #選択されたレースのURLを生成
-    if place_list[id]=='阪神':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0911/tokubetsu.html?kind=simple"
-    elif place_list[id]=='中山':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0611/tokubetsu.html?kind=simple"
-    elif place_list[id]=='福島':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0311/tokubetsu.html?kind=simple"
-    elif place_list[id]=='東京':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0511/tokubetsu.html?kind=simple"
-    elif place_list[id]=='京都':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0411/tokubetsu.html?kind=simple"
-    elif place_list[id]=='新潟':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0311/tokubetsu.html?kind=simple"
-    elif place_list[id]=='小倉':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"1011/tokubetsu.html?kind=simple"
-    elif place_list[id]=='中京':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0711/tokubetsu.html?kind=simple"
-    elif place_list[id]=='函館':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0211/tokubetsu.html?kind=simple"
-    elif place_list[id]=='札幌':
-        url_list[id]="https://www.keibalab.jp/db/race/2024"+date_list[id][0:2]+date_list[id][3:5]+"0111/tokubetsu.html?kind=simple"
+    if race.place=='阪神':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0911/tokubetsu.html?kind=simple"
+    elif race.place=='中山':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0611/tokubetsu.html?kind=simple"
+    elif race.place=='福島':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0311/tokubetsu.html?kind=simple"
+    elif race.place=='東京':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0511/tokubetsu.html?kind=simple"
+    elif race.place=='京都':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0411/tokubetsu.html?kind=simple"
+    elif race.place=='新潟':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0311/tokubetsu.html?kind=simple"
+    elif race.place=='小倉':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"1011/tokubetsu.html?kind=simple"
+    elif race.place=='中京':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0711/tokubetsu.html?kind=simple"
+    elif race.place=='函館':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0211/tokubetsu.html?kind=simple"
+    elif race.place=='札幌':
+        url="https://www.keibalab.jp/db/race/2024"+race.date[0:2]+race.date[3:5]+"0111/tokubetsu.html?kind=simple"
     
     #選択されたレースの情報をスクレイピング
-    headers = {'User-agent': 'Mozilla/5.0'}
-    response = requests.get(url=url_list[id], headers=headers)
-    response.encoding = response.apparent_encoding
-    df = pd.read_html(response.text)[0]
+    try:
+        #ユーザーエージェントを複数用意する
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0',
+            # 他にも追加可能
+        ]
+        headers = {'User-agent': random.choice(user_agents)}
+        response = requests.get(url=url, headers=headers)
+        response.encoding = response.apparent_encoding
+        df = pd.read_html(response.text)[0]
+
+    #エラー処理はchatgptによるもの。見直す必要あるかも。
+    except requests.RequestException as e:
+        return HttpResponse(f"Error fetching page: {e}", status=500)
+    except ValueError:
+        return HttpResponse("Error parsing the HTML table.", status=500)
 
     #必要なレース情報を抽出(枠番が確定したあとにも正しく抽出できるか確認する)
-    horse_list=[] #馬の名前を格納するリスト
+    horses=[]
     for j in range(df.shape[0]):
-        horse_list.append(df.iloc[j,0])
-    title=table.iloc[id,0]
+        if not Horse.objects.get(name=df.iloc[j,0]).exists():
+            horse=Horse(race_name=race.name,name=df.iloc[j,0])
+            horse.save()
+            horses.append(horse.name)
+
+    
 
     params={
-        "horses":horse_list,
-        "title":title,
+        "title":race.name,
         "id":id,
+        "horses":horses,
+        "form":vote(horses),
     }
 
     return render(request,"race/race.html",params)
+
+def voted(request):
+    if (request.method=="POST"):
+        Horse.objects.get(name=request.POST['choice']).count += 1
+
