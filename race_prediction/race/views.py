@@ -13,7 +13,7 @@ import requests
 from .models import Race,Horse
 from .forms import VoteForm
 
-from django.contrib.auth.models import User
+
 from django.contrib.auth.decorators import login_required
 
 
@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 
 
 #レース一覧画面
-def race_list(request):
+def home(request):
 
     dt_now = dt_date.today()
     m_now=dt_now.month
@@ -47,11 +47,12 @@ def race_list(request):
         'objects':objects,
             }     
 
-    return render(request,"race/race_list.html",params)
+    return render(request,"race/home.html",params)
     
 
 
 #レース情報を表示するページ
+@login_required
 def race_info(request,id):
     
     race=Race.objects.get(number=id)
@@ -124,7 +125,7 @@ def race_info(request,id):
     return render(request,"race/race_info.html",params)
 
 
-
+@login_required
 def voted(request):
     if (request.method=="POST"):
         horse=Horse.objects.get(name=request.POST['choice'])

@@ -1,0 +1,16 @@
+{% load django_bootstrap5 %}
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>ログイン</title>
+    </head>
+    <body class="container">
+        <h2>ログイン</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}" />
+            {% bootstrap_form form %}
+            {% bootstrap_button button_type="submit" content="ログイン" %}
+        </form>
+    </body>
+

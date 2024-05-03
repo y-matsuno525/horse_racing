@@ -5,13 +5,14 @@
         <title>{{ title }}</title>
     </head>
     <body class="container">
+
         <h1 class="display-4 text-primary">{{ title }}</h1>
         <form action="{% url 'voted' %}" method="post"> 
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" class="btn btn-primary my-2" value="投票">
         </form>
-        <a href="{% url 'race_list' %}">戻る</a>
+        <a href="{% url 'home' %}">戻る</a>
         
     </body>
 </html>
